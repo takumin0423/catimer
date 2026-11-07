@@ -1,0 +1,51 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project status
+
+catimer is a Tauri 2 + React 19 + TypeScript (Vite) desktop app, currently still the unmodified `create-tauri-app` template (the `greet` command and demo UI are placeholders). No test runner, linter, or formatter is configured yet.
+
+## Commands
+
+Package manager is **pnpm**.
+
+- `pnpm tauri dev` — run the desktop app (starts Vite via `beforeDevCommand`, then builds/launches the Rust side)
+- `pnpm dev` — frontend only in a browser at http://localhost:1420 (Tauri APIs like `invoke` won't work here)
+- `pnpm build` — type-check (`tsc`) and build the frontend into `dist/`
+- `pnpm tauri build` — production app bundle (runs `pnpm build` first)
+- `cargo check` / `cargo test` / `cargo clippy` — run inside `src-tauri/` for the Rust side
+
+## Architecture
+
+Two halves communicating over Tauri IPC:
+
+- **Frontend** (`src/`): React app bootstrapped from `index.html` → `src/main.tsx` → `src/App.tsx`. Calls Rust via `invoke("<command>", args)` from `@tauri-apps/api/core`.
+- **Backend** (`src-tauri/`): Rust crate. `main.rs` only calls `catimer_lib::run()`; all logic lives in `src/lib.rs` (the `_lib` crate name is required to avoid a bin/lib name clash on Windows, and enables mobile entry points).
+
+Adding a backend feature typically touches several places:
+1. Define a `#[tauri::command]` fn in `src-tauri/src/lib.rs` (or a module it imports).
+2. Register it in `tauri::generate_handler![...]` in `run()`.
+3. Call it from the frontend with `invoke`.
+4. If it uses a Tauri plugin, add the crate to `Cargo.toml`, `.plugin(...)` in `run()`, the npm package to `package.json`, **and** the plugin's permission to `src-tauri/capabilities/default.json` — calls fail at runtime without the capability entry.
+
+## Config notes
+
+- Vite dev server is pinned to port 1420 with `strictPort` (HMR on 1421 when `TAURI_DEV_HOST` is set); this must match `build.devUrl` in `src-tauri/tauri.conf.json`.
+- Vite ignores `src-tauri/**` for watching; Rust changes are picked up by `tauri dev` itself.
+- Bundle identifier: `dev.takumin0423.catimer`. CSP is currently disabled (`"csp": null`).
+- Rust edition 2024; release profile uses LTO, `panic = "abort"`, and strip.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues for `takumin0423/catimer`, managed via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five-role vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
