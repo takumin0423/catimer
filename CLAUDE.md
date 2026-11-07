@@ -36,6 +36,15 @@ Adding a backend feature typically touches several places:
 - Bundle identifier: `dev.takumin0423.catimer`. CSP is currently disabled (`"csp": null`).
 - Rust edition 2024; release profile uses LTO, `panic = "abort"`, and strip.
 
+## Git workflow
+
+Every task runs on its own branch and lands through a PR. `main` is protected by a ruleset (PR required, squash merge only, no force push), so a direct push to it is rejected.
+
+1. Start from fresh `main`: `git switch main && git pull`.
+2. Branch: `git switch -c <type>/<short-description>` (e.g. `feat/timer-display`, `fix/...`, `chore/...`).
+3. Do the work and commit on that branch.
+4. Push and open a PR against `main` with `gh pr create`. The squash commit on `main` takes the PR title and body, so write those as the final commit message.
+
 ## Agent skills
 
 ### Issue tracker
