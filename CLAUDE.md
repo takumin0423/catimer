@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 catimer is a Tauri 2 + React 19 + TypeScript (Vite) desktop app, currently still the unmodified `create-tauri-app` template (the `greet` command and demo UI are placeholders). No test runner, linter, or formatter is configured yet.
 
+The product concept and MVP scope are in `docs/concept.md`; domain terms are in `GLOSSARY.md` (use its terms, not the listed _Avoid_ synonyms, in code, issues, and UI copy); hard-to-reverse decisions are in `docs/adr/`. Read these before designing or implementing a feature.
+
 ## Commands
 
 Package manager is **pnpm**.
@@ -44,6 +46,15 @@ Every task runs on its own branch and lands through a PR. `main` is protected by
 2. Branch: `git switch -c <type>/<short-description>` (e.g. `feat/timer-display`, `fix/...`, `chore/...`).
 3. Do the work and commit on that branch.
 4. Push and open a PR against `main` with `gh pr create`. The squash commit on `main` takes the PR title and body, so write those as the final commit message.
+
+### Git and `gh` under the Bash sandbox
+
+The Bash sandbox is managed by the organization, so its settings cannot be loosened from this repo (sandbox keys such as `sandbox.excludedCommands` in `.claude/settings*.json` are ignored). Don't edit sandbox or permission settings to work around the rules below.
+
+- `origin` uses HTTPS (`https://github.com/takumin0423/catimer.git`) because SSH cannot work inside the sandbox: port 22 is blocked and `~/.ssh` is unreadable. Keep it on HTTPS.
+- `git pull` / `git fetch` work inside the sandbox once `github.com` is allowed for the command.
+- `git push` and every `gh` command fail inside the sandbox because the macOS Keychain that holds the credentials is unreachable. Run them with the sandbox disabled from the first attempt instead of trying sandboxed first; each run still goes through approval.
+- If that approval is denied, do not look for another way around it. Give the user the exact command to run themselves with the `!` prefix.
 
 ## Agent skills
 
