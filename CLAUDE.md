@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 catimer is a Tauri 2 + React 19 + TypeScript (Vite) desktop app, currently still the unmodified `create-tauri-app` template (the `greet` command and demo UI are placeholders). No test runner, linter, or formatter is configured yet.
 
+The product concept and MVP scope are in `docs/concept.md`; domain terms are in `GLOSSARY.md` (use its terms, not the listed _Avoid_ synonyms, in code, issues, and UI copy); hard-to-reverse decisions are in `docs/adr/`. Read these before designing or implementing a feature.
+
 ## Commands
 
 Package manager is **pnpm**.
