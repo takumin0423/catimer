@@ -6,7 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 catimer is a Tauri 2 + React 19 + TypeScript (Vite) desktop app, currently still the unmodified `create-tauri-app` template (the `greet` command and demo UI are placeholders). No test runner, linter, or formatter is configured yet.
 
-The product concept and MVP scope are in `docs/concept.md`; domain terms are in `GLOSSARY.md` (use its terms, not the listed _Avoid_ synonyms, in code, issues, and UI copy); hard-to-reverse decisions are in `docs/adr/`. Read these before designing or implementing a feature.
+The chosen tech stack and development process are in `docs/tech-stack.md`. The product concept and MVP scope are in `docs/concept.md`; domain terms are in `GLOSSARY.md` (use its terms, not the listed _Avoid_ synonyms, in code, issues, and UI copy); hard-to-reverse decisions are in `docs/adr/`. Read these before designing or implementing a feature.
+
+## Who writes what
+
+The owner is using this project to learn Rust and Tauri, so the work is split:
+
+- **`crates/catimer-core` (domain and persistence) is written by the human.** Do not write or edit its code, even when asked to implement a feature that touches it. Instead, suggest test cases, review, explain idiomatic Rust, and give hints. If the human explicitly asks you to write a specific piece of it, confirm once before doing so.
+- **Wiring and the frontend are yours.** Tauri commands, plugins, tray, popover, build, CI, and React UI can be implemented by the agent.
+- Issues follow the same split: domain sub-issues are labelled `ready-for-human`, wiring/UI sub-issues `ready-for-agent`.
 
 ## Commands
 
