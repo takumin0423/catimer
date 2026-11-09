@@ -54,6 +54,7 @@ Every task runs on its own branch and lands through a PR. `main` is protected by
 2. Branch: `git switch -c <type>/<short-description>` (e.g. `feat/timer-display`, `fix/...`, `chore/...`).
 3. Do the work and commit on that branch.
 4. Push and open a PR against `main` with `gh pr create`. The squash commit on `main` takes the PR title and body, so write those as the final commit message.
+5. After the PR is merged: `git switch main && git pull`, confirm with `gh pr view <branch> --json state` that it is `MERGED`, then delete the local branch with `git branch -D <branch>`. Use `-D`, not `-d`: a squash merge leaves the branch's own commits out of `main`, so `-d` refuses or depends on the remote branch still existing.
 
 ### Git and `gh` under the Bash sandbox
 
@@ -62,6 +63,7 @@ The Bash sandbox is managed by the organization, so its settings cannot be loose
 - `origin` uses HTTPS (`https://github.com/takumin0423/catimer.git`) because SSH cannot work inside the sandbox: port 22 is blocked and `~/.ssh` is unreadable. Keep it on HTTPS.
 - `git pull` / `git fetch` work inside the sandbox once `github.com` is allowed for the command.
 - `git push` and every `gh` command fail inside the sandbox because the macOS Keychain that holds the credentials is unreachable. Run them with the sandbox disabled from the first attempt instead of trying sandboxed first; each run still goes through approval.
+- `git branch -D` also fails partly inside the sandbox: it deletes the branch but cannot remove the branch's entries from `.git/config` (written by `git push -u` and by VS Code), which the sandbox blocks writing. Run it with the sandbox disabled from the first attempt, like `git push`.
 - If that approval is denied, do not look for another way around it. Give the user the exact command to run themselves with the `!` prefix.
 
 ## Agent skills
